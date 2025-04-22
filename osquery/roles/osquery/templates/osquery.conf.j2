@@ -1,0 +1,30 @@
+{{ ansible_managed | comment('c')}}
+{# Set the FIM include path items #}
+{%- if (osquery_fim_filepaths | length) > 0 %}
+{%-   set file_path_dict = {} %}
+{%-   for item in osquery_fim_filepaths %}
+{%-     set _ = file_path_dict.__setitem__(item.name, item.list) -%}
+{%-   endfor %}
+{%-   set _ = osquery_options.__setitem__("file_paths", file_path_dict) -%}
+{%- endif -%}
+
+{# Set the FIM exlude path items #}
+{%- if (osquery_fim_excludepaths | length) > 0 %}
+{%-   set exclude_file_path_dict = {} %}
+{%-   for item in osquery_fim_excludepaths %}
+{%-     set _ = exclude_file_path_dict.__setitem__(item.name, item.list) -%}
+{%-   endfor %}
+{%-   set _ = osquery_options.__setitem__("exclude_paths", exclude_file_path_dict) -%}
+{%- endif -%}
+
+{# Set the loaded packs #}
+{%- if (osquery_packs | length) > 0 %}
+{%-   set pack_dict = {} %}
+{%-   for item in osquery_packs %}
+{%-     set _ = pack_dict.__setitem__(item, "/usr/share/osquery/packs/" + item + ".conf") -%}
+{%-   endfor %}
+{%-   set _ = osquery_options.__setitem__("packs", pack_dict) -%}
+{%- endif -%}
+
+{# Render the osquery configuration file as json #}
+{{ osquery_options | to_nice_json(indent=4) }}

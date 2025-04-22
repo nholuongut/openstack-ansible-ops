@@ -1,0 +1,93 @@
+---
+# Copyright 2018, Rackspace US, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- job:
+    name: "openstack-ansible-ops:elk_metrics_7x-ubuntu-focal"
+    parent: base
+    nodeset: ubuntu-focal
+    description: "Runs a gate test on the elk_metrics_7x project."
+    run: "elk_metrics_7x/tests/test.yml"
+    post-run: "elk_metrics_7x/tests/post-run.yml"
+    files:
+      - ^elk_metrics_7x/.*
+      - ^bootstrap-embedded-ansible/.*
+    vars:
+      osa_test_repo: "openstack/openstack-ansible-ops"
+      test_clustered_elk: false
+
+- job:
+    name: "openstack-ansible-ops:elk_metrics_7x-ubuntu-jammy"
+    parent: "openstack-ansible-ops:elk_metrics_7x-ubuntu-focal"
+    nodeset: ubuntu-focal
+
+- job:
+    name: "openstack-ansible-ops:osquery-ubuntu-jammy"
+    parent: base
+    nodeset: ubuntu-jammy
+    description: "Runs a gate test on the osquery project."
+    run: "osquery/tests/test.yml"
+    post-run: "osquery/tests/post-run.yml"
+    voting: true
+    files:
+      - ^osquery/.*
+      - ^bootstrap-embedded-ansible/.*
+
+- job:
+    name: "openstack-ansible-ops:skydive-ubuntu-jammy"
+    parent: base
+    nodeset: ubuntu-jammy
+    description: "Runs a gate test on the skydive project."
+    run: "skydive/tests/test.yml"
+    post-run: "skydive/tests/post-run.yml"
+    voting: false
+    files:
+      - ^skydive/.*
+      - ^bootstrap-embedded-ansible/.*
+
+- job:
+    name: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy-v1.29.6
+    parent: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy
+    vars:
+      mcapi_vexxhost_extra_user_variables:
+        - path: /etc/openstack_deploy/user_variables_z_magnum.yml
+          block: |
+            functional_test_k8s_version: 'v1.29.6'
+            functional_test_image_url: https://static.atmosphere.dev/artifacts/magnum-cluster-api/ubuntu-jammy-kubernetes-1-29-6-1720107687.qcow2
+
+- job:
+    name: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy-v1.30.2
+    parent: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy
+    vars:
+      mcapi_vexxhost_extra_user_variables:
+        - path: /etc/openstack_deploy/user_variables_z_magnum.yml
+          block: |
+            functional_test_k8s_version: 'v1.30.2'
+            functional_test_image_url: https://static.atmosphere.dev/artifacts/magnum-cluster-api/ubuntu-jammy-kubernetes-1-30-2-1720107688.qcow2
+
+- job:
+    name: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy-v1.31.1
+    parent: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy
+    vars:
+      mcapi_vexxhost_extra_user_variables:
+        - path: /etc/openstack_deploy/user_variables_z_magnum.yml
+          block: |
+            functional_test_k8s_version: 'v1.31.1'
+            functional_test_image_url: https://static.atmosphere.dev/artifacts/magnum-cluster-api/ubuntu-jammy-kubernetes-1-31-1-1728920853.qcow2
+
+- job:
+    name: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm_ops-ubuntu-jammy
+    parent: openstack-ansible-deploy-aio_magnum_octavia_capi_kvm-ubuntu-jammy
+    files:
+      - ^mcapi_vexxhost/.*

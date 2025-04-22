@@ -1,0 +1,28 @@
+---
+component_skel:
+  kolide-fleet:
+    belongs_to:
+      - fleet_all
+      - kolide-fleet_all
+
+  kolide-db:
+    belongs_to:
+      - fleet_all
+      - kolide-db_all
+
+container_skel:
+  kolide-fleet_container:
+    belongs_to:
+      - kolide_containers
+    contains:
+      - kolide-fleet
+      - kolide-db
+
+physical_skel:
+  kolide_containers:
+    belongs_to:
+      - all_containers
+
+  kolide_hosts:
+    belongs_to:
+      - hosts

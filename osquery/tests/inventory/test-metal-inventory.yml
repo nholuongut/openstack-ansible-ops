@@ -1,0 +1,30 @@
+---
+all:
+  hosts:
+    # Local host
+    localhost:
+      ansible_connection: local
+      ansible_host: 127.0.0.1
+      ansible_user: root
+      ansible_python_interpreter: /usr/bin/python3
+
+
+osquery_all:
+  hosts:
+    localhost: {}
+
+
+kolide-db_all:
+  children:
+    kolide-db:
+      hosts:
+        localhost: {}
+
+
+fleet_all:
+  children:
+    kolide-fleet_all:
+      children:
+        kolide-fleet:
+          hosts:
+            localhost: {}
